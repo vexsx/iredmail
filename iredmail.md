@@ -99,7 +99,7 @@ Here’s a visual representation of the iRedMail architecture, showing how its c
 
 Alternatively, you can use this custom visualization:
 
-![iRedMail Functional Overview](./1.webp) <!-- Insert the image generated here -->
+![iRedMail Functional Overview](./images/1.webp) 
 
 This architecture ensures a robust, secure, and manageable mail server that can handle the needs of businesses and individuals alike.
 
