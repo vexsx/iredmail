@@ -1,4 +1,25 @@
+# Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [iRedMail: A Comprehensive Overview](#iredmail-a-comprehensive-overview)
+  - [1. Why iRedMail?](#1-why-iredmail)
+    - [Key Features of iRedMail:](#key-features-of-iredmail)
+    - [Pros and Cons of iRedMail](#pros-and-cons-of-iredmail)
+  - [2. Prerequisites for iRedMail Installation](#2-prerequisites-for-iredmail-installation)
+    - [Prerequisites Table](#prerequisites-table)
+    - [Additional Considerations:](#additional-considerations)
+  - [3. Big Picture View: iRedMail Components and Functionality](#3-big-picture-view-iredmail-components-and-functionality)
+    - [Components of iRedMail](#components-of-iredmail)
+    - [Functional Flow of iRedMail](#functional-flow-of-iredmail)
+    - [Visual Summary](#visual-summary)
+  - [4. Ports Used by iRedMail: Public and Private Configuration](#4-ports-used-by-iredmail-public-and-private-configuration)
+    - [Table: iRedMail Ports Overview](#table-iredmail-ports-overview)
+    - [Detailed Information:](#detailed-information)
+    - [Security Best Practices:](#security-best-practices)
+  - [How to install iRedMail](#how-to-install-iredmail)
+
 # iRedMail: A Comprehensive Overview
+
 
 ## 1. [Why iRedMail?](#why-iredmail)
 iRedMail is a popular, open-source mail server solution that provides a fully functional mail system for enterprises and individuals. It simplifies the installation and configuration of a mail server by bundling several open-source components such as Postfix, Dovecot, SpamAssassin, and ClamAV. With iRedMail, users can have a reliable, secure, and customizable mail server up and running quickly.
