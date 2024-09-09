@@ -448,3 +448,87 @@ sudo systemctl restart fail2ban
 ```
 
 ## Step 9: Improving Email Deliverablity
+
+To prevent your emails from being flagged as spam, you should set `PTR`, `SPF`, `DKIM` and `DMARC` records.
+
+### PTR record
+
+A pointer record, or PTR record, maps an IP address to a FQDN (fully qualified domain name). It’s the counterpart to the A record and is used for **reverse DNS** lookup, which can help with blocking spammers. Many SMTP servers reject emails if no PTR record is found for the sending server.
+
+To check the PTR record for an IP address, run this command:
+```
+dig -x IP-address +short
+```
+or
+```
+host IP-address
+```
+
+PTR record isn’t managed by your domain registrar. It’s managed by the organization that gives you an IP address. Because you get IP address from your hosting provider or ISP, not from your domain registrar, so you must set PTR record for your IP in the control panel of your hosting provider, or ask your ISP. Its value should be your mail server’s hostname: `mail.your-domain.com`. If your server uses IPv6 address, be sure to add a PTR record for your IPv6 address as well.
+
+To edit the reverse DNS record for your. log into the Kamatera client area, then open a support ticket and tell them to add PTR record for your server IP addresss to point the IP address to `mail.your-domain.com`. It’s not convenient, you might think, but this is to keep spammers away from the platform, so legitimate email senders like us will have a great IP reputation.   
+
+
+### SPF Record
+
+SPF (Sender Policy Framework) record specifies which hosts or IP address are allowed to send emails on behalf of a domain. You should allow only your own email server or your ISP’s server to send emails for your domain. In your DNS management interface, create a new TXT record like below.  
+
+![iRedMail f18](./images/18modoboa-spf-record.png)
+
+Explanation:
+
+- **TXT** indicates this is a TXT record.
+- Enter @ in the name field to represent the main domain name.
+- **v=spf1** indicates this is a SPF record and the version is SPF1.
+- **mx** means all hosts listed in the MX records are allowed to send emails for your domain and all other hosts are disallowed.
+- **~all** indicates that emails from your domain should only come from hosts specified in the SPF record. Emails that are from other hosts will be flagged as forged.  
+    
+To check if your SPF record is propagated to the public Internet, you can use the dig utility on your Linux machine like below:
+
+```
+dig your-domain.com txt
+```
+
+The txt option tells dig that we only want to query TXT records.
+
+
+### DKIM Record
+
+**DKIM** (DomainKeys Identified Mail) uses a private key to digitally sign emails sent from your domain. Receiving SMTP servers verify the signature by using the public key, which is published in the DNS DKIM record.
+
+The iRedMail script automatically configured DKIM for your server. The only thing left to do is creating DKIM record in DNS manager. Run the following command to show the DKIM public key. 
+
+```
+sudo amavisd-new showkeys
+```
+The DKIM public key is in the parentheses.
+
+![iRedMail f19](./images/19iredmail-amavis-dkim.png)
+
+Then in your DNS manager, create a TXT record, enter dkim._domainkey in the name field. Copy everything in the parentheses and paste into the value field. Delete all double quotes and line breaks.
+
+![iRedMail f20](./images/20amavisd-new-ubuntu.png)
+
+After saving your changes, run the following command to test if your DKIM record is correct.
+
+```
+sudo amavisd-new testkeys
+```
+If the DKIM record is correct, the test will pass.
+```
+TESTING#1 milad.com: dkim._domainkey.milad.com => pass
+```
+
+Note that your DKIM record may need sometime to propagate to the Internet. Depending on the domain registrar you use, your DNS record might be propagated instantly, or it might take up to 24 hours to propagate. You can go to https://www.dmarcanalyzer.com/dkim/dkim-check/, enter dkim as the selector and enter your domain name to check DKIM record propagation.
+
+### DMARC Record
+
+DMARC stands for Domain-based Message Authentication, Reporting and Conformance. DMARC can help receiving email servers to identify legitimate emails and prevent your domain name from being used by email spoofing.
+
+To create a DMARC record, go to your DNS manager and add a **TXT** record. In the name field, enter `_dmarc`. In the value field, enter the following. (You should create the [`[email protected]`](https://www.linuxbabe.com/cdn-cgi/l/email-protection) email address.)
+
+![iRedMail f21](./images/21create-dmarc-record-txt.png)
+
+The above DMARC record is a safe starting point. If you want to read the full explanation of DMARC, please check the following article. Note that this is optional.
+
+## Step 10: Testing Email Score and Placement
