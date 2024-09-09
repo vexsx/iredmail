@@ -146,3 +146,5 @@ iRedMail uses a variety of ports for different services, including email communi
 
 
 ## [How to install iRedMail](./install_iredmail.md)
+
+[Click Here](./install_iredmail.md)
