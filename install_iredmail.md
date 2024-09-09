@@ -366,3 +366,27 @@ Output:
 Setting up swapspace version 1, size = 1024 MiB (1073737728 bytes)
 no label, UUID=0aab5886-4dfb-40d4-920d-fb1115c67433
 ``` 
+Enable the swap file
+```
+sudo swapon /swapfile
+```
+To mount the swap space at system boot time, edit the `/etc/fstab` file.
+
+```
+sudo nano /etc/fstab
+```
+Add the following line at the bottom of this file.
+
+```
+/swapfile    swap    swap     defaults    0   0
+```
+
+Save and close the file. Then reload systemd and restart ClamAV.
+
+```
+sudo systemctl daemon-reload
+
+sudo systemctl restart clamav-daemon
+```
+
+### Step 7: Checking If Port 25 (outbound) is blocked
