@@ -389,4 +389,62 @@ sudo systemctl daemon-reload
 sudo systemctl restart clamav-daemon
 ```
 
-### Step 7: Checking If Port 25 (outbound) is blocked
+## Step 7: Checking If Port 25 (outbound) is blocked
+
+Your ISP or hosting provider won’t block incoming connection to port 25 of your server, which means you can receive emails from other mail servers. However, many ISP/hosting providers block outgoing connection to port 25 of other mail servers, which means you can’t send emails.
+
+If your email didn’t arrive at your other email address such as Gmail, then run the following command on your mail server to check if port 25 (outbound) is blocked.
+
+```
+telnet gmail-smtp-in.l.google.com 25
+```
+If it’s not blocked, you would see messages like below, which indicates a connection is successfully established. (Hint: Type in quit and press Enter to close the connection.)
+
+```
+Trying 74.125.68.26...
+Connected to gmail-smtp-in.l.google.com.
+Escape character is '^]'.
+220 mx.google.com ESMTP y22si1641751pll.208 - gsmtp
+```
+
+If port 25 (outbound) is blocked, you would see something like:
+
+```
+Trying 2607:f8b0:400e:c06::1a...
+Trying 74.125.195.27...
+telnet: Unable to connect to remote host: Connection timed out
+```
+
+In this case, your Postfix can’t send emails to other SMTP servers. Ask your ISP/hosting provider to open it for you. If they refuse your request, you need to
+
+### Still Can’t Send Email?
+
+If port 25 (outbound) is not blocked, but you still can’t send emails from your own mail server to your other email address like Gmail, then you should check the mail log (/var/log/mail.log).
+```
+sudo nano /var/log/mail.log
+```
+For example, some folks might see the following lines in the file.  
+```
+host gmail-smtp-in.l.google.com[2404:6800:4003:c03::1b] said: 550-5.7.1 [2a0d:7c40:3000:b8b::2]Our system has detected that 550-5.7.1 this message does not meet IPv6 sending guidelines regarding PTR 550-5.7.1 records and authentication. Please review 550-5.7.1 https://support.google.com/mail/?p=IPv6AuthError for more information
+```
+This means your mail server is using IPv6 to send the email, but you didn’t set up IPv6 records. You should go to your DNS manager, set AAAA record for mail.your-domain.com, then you should set PTR record for your IPv6 address, which is discussed in step 9.   
+
+
+### Fail2ban Blocking Your Own IP Address
+
+If you made a mistake and failed to log in to mail server multiple times, then the Fail2ban service on the mail server might block your IP address. You can add your IP address to whitelist by editing the jail.local file.
+
+```
+sudo nano /etc/fail2ban/jail.local
+```
+Add your own IP address to the ignore list like below. Replace 12.34.56.78 with your real IP address.
+
+```
+ignoreip = 12.34.56.78 127.0.0.1 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+```
+Save and close the file. Then restart Fail2ban.
+```
+sudo systemctl restart fail2ban
+```
+
+## Step 9: Improving Email Deliverablity
