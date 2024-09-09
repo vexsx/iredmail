@@ -146,3 +146,6 @@ iRedMail uses a variety of ports for different services, including email communi
 - **Port 25 Handling**: While port 25 is required for email delivery, some cloud providers block this port to prevent abuse. Be sure to check with your hosting provider and request an unblock if needed.
 
 
+# How to install 
+
+[Click Here](./install_iredmail.md)
