@@ -532,3 +532,138 @@ To create a DMARC record, go to your DNS manager and add a **TXT** record. In th
 The above DMARC record is a safe starting point. If you want to read the full explanation of DMARC, please check the following article. Note that this is optional.
 
 ## Step 10: Testing Email Score and Placement
+
+After creating PTR, SPF, DKIM record, go to https://www.mail-tester.com. You will see a unique email address. Send an email from your domain to this address and then check your score. As you can see, I got a perfect score. In the test result, you should check if your PTR record, SPF and DKIM record is valid.
+
+![iRedMail f22](./images/22Testing-Email-Score-and-Placement.png)
+
+Mail-tester.com can only show you a sender score. There’s a another service called GlockApps that allow you to check if your email is landed in the recipient’s inbox or spam folder, or rejected outright. It supports many popular email providers like Gmail, Outlook, Hotmail, YahooMail, iCloud mail, etc
+
+![iRedMail f23](./images/23glockapps-email-placement-test-scalahosting-vps.png)
+
+### How to Disable Greylisting
+
+By default, iRedMail has enabled greylisting, which tells other sending SMTP servers to try again in a few minutes. This is mainly useful to block spam, but it also degrades user experience. If you prefer to disable greylisting, follow the instructions below.
+
+Add write permission to the `/opt/iredapd/settings.py` file.
+
+```
+sudo chmod 600 /opt/iredapd/settings.py
+```
+Then edit the configuration file.
+```
+sudo nano /opt/iredapd/settings.py
+```
+Find the following line.
+```
+plugins = ["reject_null_sender", "wblist_rdns", "reject_sender_login_mismatch", "greylisting", "throttle", "amavisd_wblist", "sql_alias_access_policy"]
+```
+Remove "greylisting" from the list. Save and close the file. Then restart iredapd.
+```
+sudo systemctl restart iredapd
+```
+Change the configuration file back to read only mode.
+```
+sudo chmod 400 /opt/iredapd/settings.py
+```
+
+### Enabling SMTPS Port 465
+
+If you are going to use Microsoft Outlook client, then you need to enable SMTPS port 465 in Postfix SMTP server.
+
+### Troubleshooting Tips
+
+First, please use a VPS with at least 4GB RAM. Running iRedMail on a 1GB RAM VPS will cause the database, SpamAssassin, or ClamAV to be killed because of out-of-memory problem. If you really want to use a 1GB RAM VPS, you are going to lose incoming emails and have other undesirable outcomes.
+
+If the iRedMail web interface isn’t accessible, like a 502 gateway error, you should check the Nginx logs in `/var/log/nginx/` directory to find clues.
+
+If you can’t send or receive emails, check the mail log `/var/log/mail.log`.
+
+Also, check if the various services are running.
+
+```
+systemctl status postfix
+
+systemctl status dovecot
+
+systemctl status nginx
+
+systemctl status mariadb
+
+systemctl status clamav-daemon
+
+systemctl status amavis
+```
+If you enabled the firewall, you should open the following ports in the firewall.
+
+```
+HTTP port:  80
+HTTPS port: 443
+SMTP port:  25
+Submission port: 587 (and 465 if you are going to use Microsoft Outlook mail client)
+IMAP port:  143 and 993
+```
+
+If you would like to use the UFW firewall, check my guide here: Getting started with UFW firewall on Debian and Ubuntu.
+
+
+### How to Renew TLS Certificate
+
+Let’s Encrypt issued TLS certificate is valid for 90 days only and it’s important that you set up a Cron job to automatically renew the certificate. You can run the following command to renew certificate.
+
+```
+sudo certbot renew -w /var/www/html
+```
+You can use the --dry-run option to test the renewal process, instead of doing a real renewal.
+```
+sudo certbot renew -w /var/www/html --dry-run
+```
+If you see the following error when renewing TLS certificate.
+
+```
+The client lacks sufficient authorization :: Invalid response
+```
+
+Then you need to create the hidden directory.
+
+```
+sudo mkdir -p /var/www/html/.well-known/acme-challenge
+```
+And set www-data as the owner of the webroot.
+
+```
+sudo chown www-data:www-data /var/www/html/ -R
+```
+
+Also, edit the SSL virtual host `/etc/nginx/sites-enabled/00-default-ssl.conf`. Add the following lines.
+
+```
+location ~ /.well-known/acme-challenge {
+     root /var/www/html/;
+     allow all;
+}
+```
+
+![iRedMail f24](./images/24iredmail-letsencrypt-renew.png)
+
+Save and close the file. Test Nginx configuration and reload.
+
+```
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### Create Cron Job
+
+If now the dry run is successful, you can create Cron job to automatically renew certificate. Simply open root user’s crontab file.
+
+```
+sudo crontab -e
+```
+
+Then add the following line at the bottom of the file.
+
+```
+@daily certbot renew -w /var/www/html --quiet && systemctl reload postfix dovecot nginx
+```
+Reloading Postfix, Dovecot and Nginx is necessary to make these programs pick up the new certificate and private key.
