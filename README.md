@@ -1,7 +1,6 @@
 # iRedMail: A Comprehensive Overview
 
-## 1. Why iRedMail?
-
+## 1. [Why iRedMail?](#why-iredmail)
 iRedMail is a popular, open-source mail server solution that provides a fully functional mail system for enterprises and individuals. It simplifies the installation and configuration of a mail server by bundling several open-source components such as Postfix, Dovecot, SpamAssassin, and ClamAV. With iRedMail, users can have a reliable, secure, and customizable mail server up and running quickly.
 
 ### Key Features of iRedMail:
@@ -24,7 +23,7 @@ iRedMail is a popular, open-source mail server solution that provides a fully fu
 
 In summary, iRedMail is an excellent solution for those seeking a powerful, open-source mail server with a focus on security and ease of use. However, it is best suited for users with some technical experience who are comfortable with server administration.
 
-## 2. Prerequisites for iRedMail Installation
+## 2. [Prerequisites for iRedMail Installation](#prerequisites-for-iredmail-installation)
 
 Before installing iRedMail, there are several prerequisites that need to be met to ensure a smooth installation and optimal performance. The following table outlines the necessary requirements for hardware, software, and system configurations.
 
@@ -48,7 +47,7 @@ Before installing iRedMail, there are several prerequisites that need to be met 
 - **Backups**: It's recommended to have a backup strategy in place for the server and email data.
 - **VPS/Cloud Hosting**: Ensure your cloud or VPS provider allows email traffic and doesn’t block necessary ports, as some providers restrict email hosting services.
 
-## 3. Big Picture View: iRedMail Components and Functionality
+## 3. [Big Picture View: iRedMail Components and Functionality](#big-picture-view-iredmail-components-and-functionality)
 
 iRedMail integrates various open-source components to build a robust and secure email system. Each component serves a specific function to ensure email delivery, management, and security. Here's an overview of the main components and their roles in an iRedMail setup:
 
@@ -99,12 +98,12 @@ Here’s a visual representation of the iRedMail architecture, showing how its c
 
 Alternatively, you can use this custom visualization:
 
-![iRedMail Functional Overview](./images/1.webp) 
+![iRedMail Functional Overview](./images/1.webp)
 
 This architecture ensures a robust, secure, and manageable mail server that can handle the needs of businesses and individuals alike.
 
 
-## 4. Ports Used by iRedMail: Public and Private Configuration
+## 4. [Ports Used by iRedMail: Public and Private Configuration](#ports-used-by-iredmail-public-and-private-configuration)
 
 iRedMail uses a variety of ports for different services, including email communication, webmail access, and administrative purposes. Some of these ports need to be accessible publicly, while others should remain private for security reasons.
 
@@ -146,6 +145,4 @@ iRedMail uses a variety of ports for different services, including email communi
 - **Port 25 Handling**: While port 25 is required for email delivery, some cloud providers block this port to prevent abuse. Be sure to check with your hosting provider and request an unblock if needed.
 
 
-# How to install 
-
-[Click Here](./install_iredmail.md)
+## [How to install iRedMail](./install_iredmail.md)
