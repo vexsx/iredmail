@@ -17,6 +17,7 @@
     - [Detailed Information:](#detailed-information)
     - [Security Best Practices:](#security-best-practices)
   - [How to install iRedMail](#how-to-install-iredmail)
+- [Special Thanks to Milad Nurozi ❤️](#special-thanks-to-milad-nurozi-️)
 
 # iRedMail: A Comprehensive Overview
 
@@ -169,3 +170,5 @@ iRedMail uses a variety of ports for different services, including email communi
 ## [How to install iRedMail](./install_iredmail.md)
 
 [Click Here](./install_iredmail.md)
+
+# Special Thanks to Milad Nurozi ❤️
